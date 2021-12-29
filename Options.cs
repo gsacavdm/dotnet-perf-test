@@ -8,13 +8,13 @@ namespace dotnet_perf_test
       [Option('v', "verbose", Required = false, HelpText = "Set output to verbose messages.")]
       public bool Verbose { get; set; }
       
-      [Option('l', "limit", Required = false, Default=10, HelpText = "TBD")]
-      public int Limit { get; set; }
+      [Option('r', "runs", Required = false, Default=10, HelpText = "Number of times each test is run")]
+      public int Runs { get; set; }
 
-      [Option('i', "iterations", Required = false, Default=1, HelpText = "Test iterations")]
-      public int Iterations { get; set; }
+      [Option('i', "items", Required = false, Default=100, HelpText = "Number of items the test should use")]
+      public int Items { get; set; }
 
-      [Option('t', "test", Required = true, HelpText = "Name of test to run")]
-      public string Test { get; set; }
+      [Option('t', "tests", Required = true, HelpText = "Comma-delimited list of tests to run")]
+      public string Tests { get; set; }
     }
 }

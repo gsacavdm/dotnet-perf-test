@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.Specialized;
+using System.Collections.Generic;
 
 namespace dotnet_perf_test.Tests
 {
-    public class InsertToOrderedDictionaryTest : PerformanceTest
+    public class InsertToSortedDictionaryTest : PerformanceTest
     {
-      private readonly OrderedDictionary TheList = new OrderedDictionary();
+      private readonly SortedDictionary<string,string> TheList = new SortedDictionary<string, string>();
 
       public override void Test()
       {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.Linq;
 using CommandLine;
 using dotnet_perf_test.Tests;
 
@@ -20,21 +21,46 @@ namespace dotnet_perf_test
 
             if (options == null) throw new ArgumentNullException(nameof(options));
 
-            Console.WriteLine($"Running test {options.Test}");
-            var stopwatch = new Stopwatch();
+            var testResults = new List<TestResult>();
 
-            for (var i = 0; i < options.Iterations; i++)
+            foreach(var testName in options.Tests.Split(','))
             {
-              var test = (PerformanceTest)(Activator.CreateInstance(null, "dotnet_perf_test.Tests." + options.Test).Unwrap());
-              test.PreTest(options);
+              Console.WriteLine($"Running test {testName}");
+              var stopwatch = new Stopwatch();
   
-              stopwatch.Start();
-              test.Test();
-              stopwatch.Stop();
-  
-              test.PostTest();
-  
-              Console.WriteLine($"Test Duration: {stopwatch.Elapsed}");
+              for (var run = 0; run < options.Runs; run++)
+              {
+                var test = (PerformanceTest)(Activator.CreateInstance(null, "dotnet_perf_test.Tests." + testName).Unwrap());
+                test.PreTest(options);
+    
+                stopwatch.Start();
+                test.Test();
+                stopwatch.Stop();
+    
+                test.PostTest();
+    
+                testResults.Add(
+                  new TestResult
+                  {
+                    TestName = testName,
+                    Run = run,
+                    Items = options.Items,
+                    Duration = stopwatch.Elapsed
+                  }
+                );
+              }
+            }
+
+            var testSummaries = testResults.GroupBy(t => t.TestName, t => t)
+              .Select(g => new {
+              TestName = g.Key,
+              Runs = g.Count(),
+              Average = g.Average(ta => ta.Duration.TotalSeconds)
+            });
+
+            foreach(var testSummary in testSummaries)
+            {
+              Console.WriteLine($"Test {testSummary.TestName} | Runs {testSummary.Runs} | Average (in Seconds) {testSummary.Average}");
             }
         }
     }
