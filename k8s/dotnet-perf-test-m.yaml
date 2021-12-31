@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: dotnet-perf-test-m
+  name: dotnet-perf-test-m
+  namespace: default
+spec:
+  containers:
+  - args:
+    - -t
+    - InsertToListTest
+    - -r
+    - "200"
+    - -i
+    - "1000000"
+    image: gsacavdm/dotnet-perf-test
+    imagePullPolicy: Always
+    name: dotnet-perf-test-m
+    resources:
+      limits:
+        memory: "3Gi"
+        cpu: "0.25"
+  restartPolicy: Never 
