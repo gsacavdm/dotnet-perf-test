@@ -2,8 +2,8 @@ apiVersion: v1
 kind: Pod
 metadata:
   labels:
-    app: dotnet-perf-test-xl
-  name: dotnet-perf-test-xl
+    app: dotnet-perf-test-l-oom
+  name: dotnet-perf-test-l-oom
   namespace: default
 spec:
   containers:
@@ -16,9 +16,9 @@ spec:
     - "100000000"
     image: gsacavdm/dotnet-perf-test
     imagePullPolicy: Always
-    name: dotnet-perf-test-xl
+    name: dotnet-perf-test-l-oom
     resources:
       limits:
-        memory: "3Gi"
+        memory: "300Mi"
         cpu: "0.25"
   restartPolicy: Never 
