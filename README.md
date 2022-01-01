@@ -77,7 +77,7 @@ TODO: Rather than creating pod yaml files for each, want to try out kustomize to
 This one is straight forward - less CPU time, slower performance.
 
 | Container Name | Items Inserted | CPU Resource | Test Name | Runs | Average Duration (in Seconds) | 90th Percentile Duration (in Seconds) |
-| ============== | ============== | ============ | ========= | ==== | ============================= | ===================================== |
+| -------------- | -------------- | ------------ | --------- | ---- | ----------------------------- | ------------------------------------- |
 | M | 1M | 0.25 CPU | InsertToListTest | 200 | 0.029922860999999988 | 0.0849627 |
 | M-Slow | 1M | 0.10 CPU | InsertToListTest | 200 | 0.08596047849999998 | 0.1028228 |
 
@@ -99,7 +99,7 @@ Also, quick search indicates there isn't a good way to know how much memory an o
 
 Attempts to add 1B items with 3 Gb of memory:
 | Preallocated | Data Type | Added Item | Fail Range |
-|==============|===========|============|============|
+|--------------|-----------|------------|------------|
 | Yes          | Bool | true | Completed |
 | Yes          | Char | 'a'  | Completed |
 | Yes          | Int | 1 | Fail on init |
