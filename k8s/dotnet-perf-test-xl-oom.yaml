@@ -13,12 +13,12 @@ spec:
     - -r
     - "200"
     - -i
-    - "100000000"
+    - "1000000000"
     image: gsacavdm/dotnet-perf-test
     imagePullPolicy: Always
     name: dotnet-perf-test-xl-oom
     resources:
       limits:
-        memory: "300Mi"
+        memory: "3Gi"
         cpu: "0.25"
   restartPolicy: Never 
