@@ -90,7 +90,23 @@ TODO: Understand why this discrepancy exists.
 
 # Next Steps
 1. Understand why m-oom gets an OOMKilled error from Kubernetes vs l-oom gets a dotnet OOM.
-1. Understand why xl doesn't work...
 1. Use Customization to generate a bunch of these for every test type.
 1. Improve instructions to provision AKS cluster and export ARM template
+
+# Memory Footprint
+This is all when running the InsertToListTest which should be the simplest (other than a basic array `string[]`).
+Also, quick search indicates there isn't a good way to know how much memory an object needs (outside of the basic types) but roughly:
+
+Attempts to add 1B items with 3 Gb of memory:
+| Preallocated | Data Type | Added Item | Fail Range |
+|==============|===========|============|============|
+| Yes          | Bool | true | Completed |
+| Yes          | Char | 'a'  | Completed |
+| Yes          | Int | 1 | Fail on init |
+| Yes          | String | "a" | Fail on init |
+| No           | Bool | True | Completed |
+| No           | Char | 'a' | 536k - 537k |
+| No           | Int | 1 | 268k - 269k | 
+| No           | String | "a" | 134k - 135k | 
+| No           | String | i.ToString() | 42k - 43k | 
 
