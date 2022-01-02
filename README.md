@@ -84,9 +84,17 @@ This one is straight forward - less CPU time, slower performance.
 ## Impact of Lowering Memory Resources
 Lowering memory to such a point that there isn't enough memory for the `List<T>` causes the container to crash. The odd thing about this one is that it behaves differently for the `m` container versus the `l` container.
 * `m` gets a K8s status of `OOMKilled`
-* `m` gets a K8s status of `Error` and the logs show a dotnet exception of `System.OutOfMemoryException`
+* `l` and `xl` get a K8s status of `Error` and the logs show a dotnet exception of `System.OutOfMemoryException`
 
 TODO: Understand why this discrepancy exists.
+
+## Impact of Item Count vs Duration
+| Container Name | Items Inserted | Test Name | Runs | Average Duration (in Seconds) | 90th Percentile Duration (in Seconds) |
+| -------------- | -------------- | ------------ | --------- | ---- | ----------------------------- | ------------------------------------- |
+| S | 100 | InsertToListTest | 200 | 3.320499999999993E-06 | 6E-06 |
+| M | 1M | InsertToListTest | 200 | 0.029922860999999988 | 0.0849627 |
+| L | 100M | InsertTolListTest | 200 | 2.564864082999999 | 2.7832027 |
+| XL | 1B | InsertToListTest | 200 | 22.5939573595 | 22.9915789 |
 
 # Next Steps
 1. Understand why m-oom gets an OOMKilled error from Kubernetes vs l-oom gets a dotnet OOM.
@@ -109,4 +117,33 @@ Attempts to add 1B items with 3 Gb of memory:
 | No           | Int | 1 | 268k - 269k | 
 | No           | String | "a" | 134k - 135k | 
 | No           | String | i.ToString() | 42k - 43k | 
+
+> Note: Adding 1B strings where the string is `i.ToString()` should require about ~4 GB. This is based on the assumption that [a string requires 20 + (2 x length of string) bytes](https://thedeveloperblog.com/string-memory) and this quick python script to do the math:
+> ```
+> bytesPerNumberOfDigits = [(20 + (2 * i)) * pow(10,i) for i in range(1,9)]
+> totalBytes = reduce(lambda x,y: x + y, bytesPerNumberOfDigits)
+> "{:,}".format(totalBytes)
+> ```
+
+# Other Raw Notes
+Confirming memory available from within the container (for the 3Gb ones):
+* From grep MemTotal /proc/meminfo > 14,333,240 kB = 14 gB (this is the total for the node)
+* From /sys/fs/cgroup/memory/memory.limit_in_byes > 3,221,225,472 = 3 gB (this is the amount allocated for the container)
+
+In dotnet-scratch:
+ps -e -o pid,%mem,command shows the app steadily growing in %mem until it crashes.
+It gets up to 15.5% before it crashes.
+1.5% of of 14 gB = 2.1 gB
+Assuming a growth rate of 0.5% (aka 0.7 Gb), the next amount would be 2.8 gB which is very close to the 3 gB allowed for this container.
+Note - I'm running through dotnet run which is its own PS separate from the app and takes 0.7 %mem
+Meh, even without dotnet run and its 0.7% mem, the app got to the same usage (15.5%) and item range (42k-43k)
+
+PS shows percentage of what's in meminfo I'm assuming so 15.5% of 14 gB = 2.1 gB
+
+From pap = 23,882,268K > 23 GB? No way
+
+Other debugging coolness:
+* K debug node/aks-large... -it --image=mcr.microsoft.com/aks/fundamental/base-ubuntu:v0.0.11
+* Run top
+* Debugging with dotnet-stack / dotnet-dump / dotnet-trace
 
