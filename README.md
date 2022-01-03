@@ -90,7 +90,7 @@ TODO: Understand why this discrepancy exists.
 
 ## Impact of Item Count vs Duration
 | Container Name | Items Inserted | Test Name | Runs | Average Duration (in Seconds) | 90th Percentile Duration (in Seconds) |
-| -------------- | -------------- | ------------ | --------- | ---- | ----------------------------- | ------------------------------------- |
+| -------------- | -------------- | --------- | ---- | ----------------------------- | ------------------------------------- |
 | S | 100 | InsertToListTest | 200 | 3.320499999999993E-06 | 6E-06 |
 | M | 1M | InsertToListTest | 200 | 0.029922860999999988 | 0.0849627 |
 | L | 100M | InsertTolListTest | 200 | 2.564864082999999 | 2.7832027 |
