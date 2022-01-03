@@ -1,24 +1,28 @@
-apiVersion: v1
-kind: Pod
+apiVersion: batch/v1
+kind: Job
 metadata:
   labels:
     app: dotnet-perf-test-xl-extra-memory
   name: dotnet-perf-test-xl-extra-memory
   namespace: default
 spec:
-  containers:
-  - args:
-    - -t
-    - InsertToListTest
-    - -r
-    - "200"
-    - -i
-    - "1000000000"
-    image: gsacavdm/dotnet-perf-test
-    imagePullPolicy: Always
-    name: dotnet-perf-test-xl-extra-memory
-    resources:
-      limits:
-        memory: "20Gi"
-        cpu: "0.25"
-  restartPolicy: Never 
+  completions: 5
+  parallelism: 5
+  template:
+    spec:
+      containers:
+      - args:
+        - -t
+        - InsertToListTest
+        - -r
+        - "200"
+        - -i
+        - "1000000000"
+        image: gsacavdm/dotnet-perf-test
+        imagePullPolicy: Always
+        name: dotnet-perf-test-xl-extra-memory
+        resources:
+          limits:
+            memory: "20Gi"
+            cpu: "0.25"
+      restartPolicy: Never 

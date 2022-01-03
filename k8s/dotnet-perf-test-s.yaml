@@ -1,24 +1,28 @@
-apiVersion: v1
-kind: Pod
+apiVersion: batch/v1
+kind: Job
 metadata:
   labels:
     app: dotnet-perf-test-s
   name: dotnet-perf-test-s
   namespace: default
 spec:
-  containers:
-  - args:
-    - -t
-    - InsertToListTest
-    - -r
-    - "200"
-    - -i
-    - "100"
-    image: gsacavdm/dotnet-perf-test
-    imagePullPolicy: Always
-    name: dotnet-perf-test-s
-    resources:
-      limits:
-        memory: "3Gi"
-        cpu: "0.25"
-  restartPolicy: Never 
+  completions: 20
+  parallelism: 20
+  template:
+    spec:
+      containers:
+      - args:
+        - -t
+        - InsertToListTest
+        - -r
+        - "200"
+        - -i
+        - "100"
+        image: gsacavdm/dotnet-perf-test
+        imagePullPolicy: Always
+        name: dotnet-perf-test-s
+        resources:
+          limits:
+            memory: "3Gi"
+            cpu: "0.25"
+      restartPolicy: Never 
